@@ -38,6 +38,20 @@ const photoDivs = imagePaths.map(path => {
     `;
 });
 
+const widths = [
+    20, 45, 45, 20, 20, 20, 25, 20, 20, 25, 20, 25, 20, 20, 20,
+    45, 20, 25, 20, 25, 40, 25, 22, 22, 22, 22, 22, 20, 20
+];
+
+let lastX = null;
+let lastY = null;
+let totalDistance = 0;
+let iterator = -1;
+let madeDivs = 0;
+
+/**
+ * Preload all images
+ */
 function preloadImages(paths, callback) {
     let loadedCount = 0;
     const totalCount = paths.length;
@@ -60,61 +74,59 @@ function preloadImages(paths, callback) {
     });
 }
 
-const widths = [
-    20, 45, 45, 20, 20, 20, 25, 20, 20, 25, 20, 25, 20, 20, 20,
-    45, 20, 25, 20, 25, 40, 25, 22, 22, 22, 22, 22, 20, 20
-];
+/**
+ * Start the effect after images are preloaded
+ */
+function startInteraction() {
+    if (window.innerWidth > 768) {
+        document.addEventListener('mousemove', handleMouseMove);
+    } else {
+        setInterval(() => {
+            const randomX = Math.random() * (window.innerWidth * 0.3);
+            const randomY = Math.random() * (window.innerHeight * 0.3);
+            addNewDiv(randomX, randomY);
+        }, 1000);
+    }
+}
 
-let lastX = null;
-let lastY = null;
-let totalDistance = 0;
-let iterator = -1;
-let madeDivs = 0;
+function handleMouseMove(e) {
+    const currentX = e.clientX;
+    const currentY = e.clientY;
 
-if(window.innerWidth>768) {
-    document.addEventListener('mousemove', (e) => {
-        const currentX = e.clientX;
-        const currentY = e.clientY;
+    if (lastX !== null && lastY !== null) {
+        const deltaX = currentX - lastX;
+        const deltaY = currentY - lastY;
+        const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+        totalDistance += distance;
+    }
 
-        if (lastX !== null && lastY !== null) {
-            const deltaX = currentX - lastX;
-            const deltaY = currentY - lastY;
-            const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-            totalDistance += distance;
-        }
+    lastX = currentX;
+    lastY = currentY;
 
-        lastX = currentX;
-        lastY = currentY;
-
-        if(totalDistance >= window.innerWidth / 11){
-            addNewDiv(currentX, currentY);
-            totalDistance = 0;
-        }
-    });
-} else {
-    setInterval(() => {
-        const randomX = Math.random() * (window.innerWidth * 0.3);
-        const randomY = Math.random() * (window.innerHeight * 0.3);
-        addNewDiv(randomX, randomY);
-    }, 1000);
+    if (totalDistance >= window.innerWidth / 11) {
+        addNewDiv(currentX, currentY);
+        totalDistance = 0;
+    }
 }
 
 function addNewDiv(x, y) {
     iterator++;
     madeDivs++;
-    if(iterator > photoDivs.length - 1) {
+    if (iterator > photoDivs.length - 1) {
         iterator = 0;
     }
-    if(iterator > 8) {
-        document.querySelector(".number").innerText = iterator+1;
+
+    const numberElement = document.querySelector(".number");
+    if (iterator > 8) {
+        numberElement.innerText = iterator + 1;
     } else {
-        document.querySelector(".number").innerText = `0${iterator+1}`;
+        numberElement.innerText = `0${iterator + 1}`;
     }
 
-    if(madeDivs > 5) {
-        document.querySelectorAll(".main>div")[0].remove();
+    if (madeDivs > 5) {
+        const oldDiv = document.querySelector(".main>div");
+        if (oldDiv) oldDiv.remove();
     }
-    
 
     let newDiv = document.createElement("div");
     newDiv.style.top = `${y}px`;
@@ -124,4 +136,5 @@ function addNewDiv(x, y) {
     document.querySelector(".main").appendChild(newDiv);
 }
 
+// Preload all images before starting interaction
 preloadImages(imagePaths, startInteraction);
