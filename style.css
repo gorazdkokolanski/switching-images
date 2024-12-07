@@ -1,0 +1,62 @@
+@import url('https://fonts.cdnfonts.com/css/aeroport-2');
+
+body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Aeroport', sans-serif;
+}
+
+header{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    top: 0;
+    width: 100%;
+    z-index: 30;
+    height: 56px;
+}
+
+header>div{
+    font-size: 12px;
+    font-weight: 700;
+}
+
+header>div:nth-child(1){
+    margin-left: 30px;
+}
+
+header>div:nth-child(2){
+    margin-right: 60px;
+}
+
+.oursec{
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main{
+    position: absolute;
+    inset: 0;
+}
+
+.main>div{
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.main>div>div{
+    width: 100%;
+}
+
+.main>div>div>img{
+    width: 100%;
+}
+
+@media only screen and (max-width: 768px){
+    .main>div{
+        width: 70%!important;
+        transform: none!important;
+    }
+}
